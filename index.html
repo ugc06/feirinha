@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feirinha Natural</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .admin-button {
+      position: absolute;
+      left: 1em;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      padding: 1em;
+      gap: 2em;
+      flex: 1;
+    }
+    .produtos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      flex: 2;
+    }
+    .carrinho {
+      flex: 1;
+      border-left: 1px solid #ccc;
+      padding-left: 1em;
+    }
+    .produto, .item-carrinho {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1em;
+      width: 200px;
+    }
+    .produto img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.5em;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 5px;
+      align-items: center;
+    }
+    .qtd-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    footer {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 1em;
+      margin-top: auto;
+    }
+    .painel-adm {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .painel-conteudo {
+      background: #fff;
+      padding: 2em;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 100%;
+    }
+    input[type="password"], input[type="number"] {
+      margin: 5px 0;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="btn admin-button" onclick="abrirPainelADM()">ADM</button>
+    <h1 style="margin: 0 auto;">Feirinha da Dona Maria</h1>
+  </header>
+
+  <div class="container">
+    <div class="produtos" id="lista-produtos"></div>
+    <div class="carrinho" id="carrinho"></div>
+  </div>
+
+  <footer>
+    <p>Contato: +55 (42) 99912-3456 | Endereço: Entrada da Vila Rural - Ventania</p>
+  </footer>
+
+  <!-- Painel ADM -->
+  <div class="painel-adm" id="painel-adm">
+    <div class="painel-conteudo">
+      <div id="form-senha-adm">
+        <p>Digite a senha de administrador:</p>
+        <input type="password" id="senha-input" placeholder="Senha">
+        <button class="btn" onclick="verificarSenha()">Entrar</button>
+      </div>
+      <div id="estoque-edicao" style="display:none;">
+        <h3>Editar Estoque</h3>
+        <div id="form-estoque"></div>
+        <button class="btn" onclick="salvarEstoque()">Salvar</button>
+        <button class="btn" onclick="fecharPainelADM()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const senhaADM = "1234";
+    let emPagamento = false;
+    let carrinhoBackup = [];
+
+    let produtos = [
+      { id: 1, nome: "Alface", preco: 3.5, estoque: 8, imagem: "https://organicosinbox.com.br/wp-content/uploads/2020/11/alface-crespa-organica.jpg" },
+      { id: 2, nome: "Broa", preco: 10, estoque: 6, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiMnK1t7FbRg6Sm5EOZPhOKEPRwxjoqt5ZKQ&s" },
+      { id: 3, nome: "Chineque", preco: 3, estoque: 20, imagem: "https://www.nacozinhabrasil.com/wordpress/wp-content/uploads/2012/02/chineque-naco.jpg" },
+      { id: 4, nome: "Couve-flor", preco: 9, estoque: 7, imagem: "https://www.infoescola.com/wp-content/uploads/2010/08/couve-flor_227987356.jpg" },
+      { id: 5, nome: "Pão Caseiro", preco: 7, estoque: 5, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhvhIPzBVwlqxFX5LQEGDuBeDLS-YSIKKNVA&s" },
+      { id: 6, nome: "Sequilhos (pacote com 5)", preco: 4, estoque: 10, imagem: "https://assets.unileversolutions.com/recipes-v2/35829.jpg" },
+      { id: 7, nome: "Tomate", preco: 5, estoque: 10, imagem: "https://jpimg.com.br/uploads/2025/02/conheca-os-beneficios-do-tomate-para-a-saude.jpg" },
+    ];
+
+    produtos.sort((a, b) => a.nome.localeCompare(b.nome));
+    let carrinho = [];
+
+    function mostrarProdutos() {
+      const container = document.getElementById('lista-produtos');
+      container.innerHTML = '';
+      produtos.forEach(prod => {
+        container.innerHTML += `
+          <div class="produto">
+            <img src="${prod.imagem}" alt="${prod.nome}">
+            <h3>${prod.nome}</h3>
+            <p>R$ ${prod.preco.toFixed(2)}</p>
+            <p>Estoque: ${prod.estoque}</p>
+            <div class="qtd-container">
+              <input type="number" min="1" max="${prod.estoque}" value="1" id="qtd-${prod.id}" style="width: 50px;">
+            </div>
+            <div class="btn-group">
+              <button class="btn" onclick="removerUm(${prod.id})">Remover</button>
+              <button class="btn" onclick="adicionarCarrinho(${prod.id})" ${prod.estoque === 0 ? 'disabled' : ''}>Adicionar</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function atualizarCarrinho() {
+      const divCarrinho = document.getElementById('carrinho');
+      divCarrinho.innerHTML = '';
+
+      if (emPagamento) {
+        divCarrinho.innerHTML = `
+          <h2>Pagamento via PIX</h2>
+          <p>Valor: <strong>R$ ${emPagamento}</strong></p>
+          <p>Chave PIX: <strong>donamaria@gmail.com</strong></p>
+          <p>Após pagamento, pressione "Voltar para loja" ou caso desista da compra, pressione "Cancelar compra".</p>
+          <button class="btn" onclick="concluirCompra()">Voltar para loja</button>
+          <button class="btn" onclick="cancelarCompra()">Cancelar compra</button>
+        `;
+        return;
+      }
+
+      divCarrinho.innerHTML += '<h2>Seu Carrinho:</h2>';
+      let total = 0;
+      carrinho.forEach(item => {
+        total += item.preco * item.qtd;
+        divCarrinho.innerHTML += `
+          <div class="item-carrinho">
+            <strong>${item.nome}</strong><br>
+            Quantidade: ${item.qtd}<br>
+            Subtotal: R$ ${(item.preco * item.qtd).toFixed(2)}
+          </div>`;
+      });
+      if (carrinho.length > 0) {
+        divCarrinho.innerHTML += `<h3>Total: R$ ${total.toFixed(2)}</h3>
+          <button class="btn" onclick="finalizarCompra(${total.toFixed(2)})">Finalizar Compra</button>`;
+      }
+    }
+
+    function adicionarCarrinho(id) {
+      const produto = produtos.find(p => p.id === id);
+      const qtdInput = document.getElementById(`qtd-${id}`);
+      const qtd = parseInt(qtdInput.value);
+      const totalNoCarrinho = carrinho.find(i => i.id === id)?.qtd || 0;
+
+      if (qtd + totalNoCarrinho > produto.estoque) return;
+
+      const item = carrinho.find(i => i.id === id);
+      if (item) item.qtd += qtd;
+      else carrinho.push({ ...produto, qtd });
+
+      atualizarCarrinho();
+    }
+
+    function removerUm(id) {
+      const item = carrinho.find(i => i.id === id);
+      if (item) {
+        item.qtd--;
+        if (item.qtd <= 0) carrinho = carrinho.filter(i => i.id !== id);
+        atualizarCarrinho();
+      }
+    }
+
+    function finalizarCompra(total) {
+      carrinhoBackup = JSON.parse(JSON.stringify(carrinho));
+      emPagamento = total;
+      atualizarCarrinho();
+    }
+
+    function concluirCompra() {
+      carrinhoBackup.forEach(itemCarrinho => {
+        const produtoOriginal = produtos.find(p => p.id === itemCarrinho.id);
+        if (produtoOriginal) {
+          produtoOriginal.estoque -= itemCarrinho.qtd;
+        }
+      });
+      carrinho = [];
+      carrinhoBackup = [];
+      emPagamento = false;
+      mostrarProdutos();
+      atualizarCarrinho();
+    }
+
+    function cancelarCompra() {
+      carrinhoBackup = [];
+      carrinho = [];
+      emPagamento = false;
+      atualizarCarrinho();
+    }
+
+    function abrirPainelADM() {
+      document.getElementById("painel-adm").style.display = "flex";
+      document.getElementById("form-senha-adm").style.display = "block";
+      document.getElementById("estoque-edicao").style.display = "none";
+      document.getElementById("senha-input").value = "";
+    }
+
+    function fecharPainelADM() {
+      document.getElementById("painel-adm").style.display = "none";
+    }
+
+    function verificarSenha() {
+      const senha = document.getElementById("senha-input").value;
+      if (senha === senhaADM) {
+        document.getElementById("form-senha-adm").style.display = "none";
+        document.getElementById("estoque-edicao").style.display = "block";
+        const formEstoque = document.getElementById("form-estoque");
+        formEstoque.innerHTML = '';
+        produtos.forEach(p => {
+          formEstoque.innerHTML += `
+            <p>${p.nome}: <input type="number" id="estoque-${p.id}" value="${p.estoque}" min="0"></p>
+          `;
+        });
+      } else {
+        alert("Senha incorreta!");
+      }
+    }
+
+    function salvarEstoque() {
+      produtos.forEach(p => {
+        const novo = parseInt(document.getElementById(`estoque-${p.id}`).value);
+        if (!isNaN(novo)) {
+          p.estoque = novo;
+        }
+      });
+      mostrarProdutos();
+      atualizarCarrinho();
+      fecharPainelADM();
+    }
+
+    document.getElementById("painel-adm").addEventListener("click", function(e) {
+      if (e.target === this) fecharPainelADM();
+    });
+
+    mostrarProdutos();
+    atualizarCarrinho();
+  </script>
+</body>
+</html>
