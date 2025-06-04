@@ -1,1 +1,1 @@
-A simple HTML/JS/CSS starter template
+Um site simples de vendas de hortifrutis e produtos artesanais
