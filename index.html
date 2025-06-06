@@ -136,7 +136,9 @@
 <body>
   <header>
     <button class="btn admin-button" onclick="abrirPainelADM()">ADM</button>
+    <button class="btn" style="position: absolute; left: 80px; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-campo')">Sobre o Campo e a Cidade</button>
     <h1 style="margin: 0 auto;">Feirinha da Dona Maria</h1>
+    <button class="btn" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-beneficios')">Benefícios do Site</button>
   </header>
 
   <div class="container">
@@ -162,6 +164,29 @@
         <button class="btn" onclick="salvarEstoque()">Salvar</button>
         <button class="btn" onclick="fecharPainelADM()">Fechar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal: Sobre o Campo e a Cidade -->
+  <div id="modal-campo" class="painel-adm">
+    <div class="painel-conteudo">
+      <h2>Sobre o Campo e a Cidade</h2>
+      <p>Os produtos oferecidos nesta feirinha são cultivados em pequenas propriedades rurais de Ventania, PR. Promovemos o contato direto entre o campo e a cidade, valorizando o agricultor local e garantindo alimentos frescos e saudáveis para você.</p>
+      <button class="btn" onclick="fecharModal('modal-campo')">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Modal: Benefícios do Site -->
+  <div id="modal-beneficios" class="painel-adm">
+    <div class="painel-conteudo">
+      <h2>Benefícios do Site</h2>
+      <ul>
+        <li>🌱 Facilidade para comprar produtos frescos de casa</li>
+        <li>🚚 Retirada rápida ou entrega em pontos da cidade</li>
+        <li>💳 Pagamento via PIX</li>
+        <li>🔄 Estoque atualizado em tempo real</li>
+      </ul>
+      <button class="btn" onclick="fecharModal('modal-beneficios')">Fechar</button>
     </div>
   </div>
 
@@ -332,6 +357,15 @@
     document.getElementById("painel-adm").addEventListener("click", function (e) {
       if (e.target === this) fecharPainelADM();
     });
+
+    // Funções para modais informativos
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
 
     mostrarProdutos();
     atualizarCarrinho();
