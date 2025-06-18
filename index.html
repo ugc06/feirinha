@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +13,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     header {
       background-color: #4CAF50;
       color: white;
@@ -24,14 +22,12 @@
       justify-content: center;
       position: relative;
     }
-
     .admin-button {
       position: absolute;
       left: 1em;
       top: 50%;
       transform: translateY(-50%);
     }
-
     .container {
       display: flex;
       flex-direction: row;
@@ -39,20 +35,17 @@
       gap: 2em;
       flex: 1;
     }
-
     .produtos {
       display: flex;
       flex-wrap: wrap;
       gap: 1em;
       flex: 2;
     }
-
     .carrinho {
       flex: 1;
       border-left: 1px solid #ccc;
       padding-left: 1em;
     }
-
     .produto,
     .item-carrinho {
       border: 1px solid #ccc;
@@ -60,13 +53,11 @@
       padding: 1em;
       width: 200px;
     }
-
     .produto img {
       width: 100%;
       height: auto;
       border-radius: 8px;
     }
-
     .btn {
       background-color: #4CAF50;
       color: white;
@@ -75,11 +66,9 @@
       cursor: pointer;
       border-radius: 5px;
     }
-
     .btn:hover {
       background-color: #45a049;
     }
-
     .btn-group {
       display: flex;
       flex-direction: column;
@@ -87,13 +76,11 @@
       margin-top: 5px;
       align-items: center;
     }
-
     .qtd-container {
       display: flex;
       justify-content: center;
       margin-top: 10px;
     }
-
     footer {
       background-color: #4CAF50;
       color: white;
@@ -101,7 +88,6 @@
       padding: 1em;
       margin-top: auto;
     }
-
     .painel-adm {
       display: none;
       position: fixed;
@@ -114,15 +100,15 @@
       align-items: center;
       z-index: 1000;
     }
-
     .painel-conteudo {
       background: #fff;
       padding: 2em;
       border-radius: 8px;
-      max-width: 400px;
+      max-width: 600px; /* Increased max-width for gallery */
       width: 100%;
+      max-height: 90vh; /* Added for scrollability */
+      overflow-y: auto; /* Added for scrollability */
     }
-
     input[type="password"],
     input[type="number"] {
       margin: 5px 0;
@@ -130,27 +116,36 @@
       width: 100%;
       box-sizing: border-box;
     }
+    .gallery-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1em;
+      margin-top: 1em;
+    }
+    .gallery-images img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
   </style>
 </head>
-
 <body>
   <header>
     <button class="btn admin-button" onclick="abrirPainelADM()">ADM</button>
-    <button class="btn" style="position: absolute; left: 80px; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-campo')">Sobre o Campo e a Cidade</button>
+    <button class="btn" style="position: absolute; left: 80px; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-agrinho')">Sobre o Agrinho</button>
+    <button class="btn" style="position: absolute; left: 200px; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-campo')">Sobre o Campo e a Cidade</button>
     <h1 style="margin: 0 auto;">Feirinha Conexão Campo e Cidade</h1>
-    <button class="btn" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-beneficios')">Benefícios do Site</button>
+    <button class="btn" style="position: absolute; right: 200px; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-beneficios')">Benefícios do Site</button>
+    <button class="btn" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);" onclick="abrirModal('modal-galeria')">Galeria de Imagens</button>
   </header>
-
   <div class="container">
     <div class="produtos" id="lista-produtos"></div>
     <div class="carrinho" id="carrinho"></div>
   </div>
-
   <footer>
     <p>Contato: +55 (42) 99901-7231 | Ventania-PR</p>
   </footer>
-
-  <!-- Painel ADM -->
   <div class="painel-adm" id="painel-adm">
     <div class="painel-conteudo">
       <div id="form-senha-adm">
@@ -164,11 +159,15 @@
         <button class="btn" onclick="salvarEstoque()">Salvar</button>
         <button class="btn" onclick="fecharPainelADM()">Fechar</button>
       </div>
-      
     </div>
   </div>
-
-  <!-- Modal: Sobre o Campo e a Cidade -->
+  <div id="modal-agrinho" class="painel-adm">
+    <div class="painel-conteudo">
+      <h2>Sobre o Agrinho</h2>
+      <p>O Programa Agrinho é uma iniciativa do SENAR-PR (Serviço Nacional de Aprendizagem Rural do Paraná) que visa levar conhecimento sobre o agronegócio e a importância do campo para crianças e jovens do ensino fundamental e médio. Através de diversas atividades lúdicas e educativas, o Agrinho busca despertar nos alunos a consciência sobre a produção de alimentos, a sustentabilidade e o valor do trabalho no campo. É uma ponte entre o universo rural e o cotidiano das cidades, promovendo uma educação mais completa e contextualizada.</p>
+      <button class="btn" onclick="fecharModal('modal-agrinho')">Fechar</button>
+    </div>
+  </div>
   <div id="modal-campo" class="painel-adm">
     <div class="painel-conteudo">
       <h2>Sobre o Campo e a Cidade</h2>
@@ -176,8 +175,6 @@
       <button class="btn" onclick="fecharModal('modal-campo')">Fechar</button>
     </div>
   </div>
-
-  <!-- Modal: Benefícios do Site -->
   <div id="modal-beneficios" class="painel-adm">
     <div class="painel-conteudo">
       <h2>Benefícios do Site</h2>
@@ -190,12 +187,24 @@
       <button class="btn" onclick="fecharModal('modal-beneficios')">Fechar</button>
     </div>
   </div>
-
+  <div id="modal-galeria" class="painel-adm">
+    <div class="painel-conteudo">
+      <h2>Galeria de Imagens</h2>
+      <div class="gallery-images">
+        <img src="https://example.com/image1.jpg" alt="Colheita de Alface">
+        <img src="https://example.com/image2.jpg" alt="Pães Frescos">
+        <img src="https://example.com/image3.jpg" alt="Produtor Rural">
+        <img src="https://example.com/image4.jpg" alt="Feira Local">
+        <img src="https://example.com/image5.jpg" alt="Horta Orgânica">
+        <img src="https://example.com/image6.jpg" alt="Produtos da Fazenda">
+        </div>
+      <button class="btn" onclick="fecharModal('modal-galeria')">Fechar</button>
+    </div>
+  </div>
   <script>
     const senhaADM = "1234";
     let emPagamento = false;
     let carrinhoBackup = [];
-
     let produtos = [
       { id: 1, nome: "Alface", preco: 3.5, estoque: 8, imagem: "https://organicosinbox.com.br/wp-content/uploads/2020/11/alface-crespa-organica.jpg" },
       { id: 2, nome: "Broa (4 unidades)", preco: 6, estoque: 6, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiMnK1t7FbRg6Sm5EOZPhOKEPRwxjoqt5ZKQ&s" },
@@ -206,10 +215,8 @@
       { id: 7, nome: "Sequilhos (5 unidades)", preco: 4, estoque: 10, imagem: "https://assets.unileversolutions.com/recipes-v2/35829.jpg" },
       { id: 8, nome: "Tomate", preco: 5, estoque: 10, imagem: "https://jpimg.com.br/uploads/2025/02/conheca-os-beneficios-do-tomate-para-a-saude.jpg" },
     ];
-
     produtos.sort((a, b) => a.nome.localeCompare(b.nome));
     let carrinho = [];
-
     function mostrarProdutos() {
       const container = document.getElementById('lista-produtos');
       container.innerHTML = '';
@@ -230,11 +237,9 @@
           </div>`;
       });
     }
-
     function atualizarCarrinho() {
       const divCarrinho = document.getElementById('carrinho');
       divCarrinho.innerHTML = '';
-
       if (emPagamento) {
         divCarrinho.innerHTML = `
           <h2>Pagamento via PIX</h2>
@@ -246,7 +251,6 @@
         `;
         return;
       }
-
       divCarrinho.innerHTML += '<h2>Seu Carrinho:</h2>';
       let total = 0;
       carrinho.forEach(item => {
@@ -263,22 +267,17 @@
           <button class="btn" onclick="finalizarCompra(${total.toFixed(2)})">Finalizar Compra</button>`;
       }
     }
-
     function adicionarCarrinho(id) {
       const produto = produtos.find(p => p.id === id);
       const qtdInput = document.getElementById(`qtd-${id}`);
       const qtd = parseInt(qtdInput.value);
       const totalNoCarrinho = carrinho.find(i => i.id === id)?.qtd || 0;
-
       if (qtd + totalNoCarrinho > produto.estoque) return;
-
       const item = carrinho.find(i => i.id === id);
       if (item) item.qtd += qtd;
       else carrinho.push({ ...produto, qtd });
-
       atualizarCarrinho();
     }
-
     function removerUm(id) {
       const item = carrinho.find(i => i.id === id);
       if (item) {
@@ -287,13 +286,11 @@
         atualizarCarrinho();
       }
     }
-
     function finalizarCompra(total) {
       carrinhoBackup = JSON.parse(JSON.stringify(carrinho));
       emPagamento = total;
       atualizarCarrinho();
     }
-
     function concluirCompra() {
       carrinhoBackup.forEach(itemCarrinho => {
         const produtoOriginal = produtos.find(p => p.id === itemCarrinho.id);
@@ -307,25 +304,21 @@
       mostrarProdutos();
       atualizarCarrinho();
     }
-
     function cancelarCompra() {
       carrinhoBackup = [];
       carrinho = [];
       emPagamento = false;
       atualizarCarrinho();
     }
-
     function abrirPainelADM() {
       document.getElementById("painel-adm").style.display = "flex";
       document.getElementById("form-senha-adm").style.display = "block";
       document.getElementById("estoque-edicao").style.display = "none";
       document.getElementById("senha-input").value = "";
     }
-
     function fecharPainelADM() {
       document.getElementById("painel-adm").style.display = "none";
     }
-
     function verificarSenha() {
       const senha = document.getElementById("senha-input").value;
       if (senha === senhaADM) {
@@ -342,7 +335,6 @@
         alert("Senha incorreta!");
       }
     }
-
     function salvarEstoque() {
       produtos.forEach(p => {
         const novo = parseInt(document.getElementById(`estoque-${p.id}`).value);
@@ -354,23 +346,18 @@
       atualizarCarrinho();
       fecharPainelADM();
     }
-
     document.getElementById("painel-adm").addEventListener("click", function (e) {
       if (e.target === this) fecharPainelADM();
     });
-
     // Funções para modais informativos
     function abrirModal(id) {
       document.getElementById(id).style.display = 'flex';
     }
-
     function fecharModal(id) {
       document.getElementById(id).style.display = 'none';
     }
-
     mostrarProdutos();
     atualizarCarrinho();
   </script>
 </body>
-
 </html>
